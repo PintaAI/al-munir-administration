@@ -87,10 +87,8 @@ export function BendaharaSidebar({ role }: BendaharaSidebarProps) {
         ]
       case "pondok":
         return [
-          { href: "syahriah", label: "Syahriah", icon: Receipt },
           { href: "uang-saku", label: "Uang Saku", icon: DollarSign },
           { href: "laundry", label: "Laundry", icon: Shirt },
-          { href: "buku", label: "Buku", icon: BookOpen },
         ]
       default:
         return []
@@ -169,16 +167,18 @@ export function BendaharaSidebar({ role }: BendaharaSidebarProps) {
                 )}
               </SidebarMenuItem>
 
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  render={
-                    <a href={`${basePath}/laporan-keuangan`}>
-                      <FileText className="h-4 w-4" />
-                      <span>Laporan Keuangan</span>
-                    </a>
-                  }
-                />
-              </SidebarMenuItem>
+              {role !== "pondok" && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    render={
+                      <a href={`${basePath}/laporan-keuangan`}>
+                        <FileText className="h-4 w-4" />
+                        <span>Laporan Keuangan</span>
+                      </a>
+                    }
+                  />
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
