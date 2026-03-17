@@ -10,3 +10,18 @@ export const {
   signUp,
   useSession,
 } = authClient;
+
+// Export role type for use in components
+export type Role = "ADMIN" | "BENDAHARA_SMK" | "BENDAHARA_SMP" | "BENDAHARA_PONDOK" | "SANTRI";
+
+// Extended user type with role
+export interface UserWithRole {
+  id: string;
+  email: string;
+  emailVerified: boolean;
+  name: string;
+  image?: string | null;
+  role: Role;
+  createdAt: Date;
+  updatedAt: Date;
+}
