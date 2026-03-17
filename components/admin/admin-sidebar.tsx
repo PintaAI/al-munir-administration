@@ -8,6 +8,7 @@ import {
   ChevronRight,
   ChevronDown,
   LayoutDashboard,
+  FileText,
 } from "lucide-react"
 
 import {
@@ -124,6 +125,17 @@ export function AdminSidebar() {
                     </SidebarMenuSubItem>
                   </SidebarMenuSub>
                 )}
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  render={
+                    <a href="/dashboard/admin/laporan-keuangan">
+                      <FileText className="h-4 w-4" />
+                      <span>Laporan Keuangan</span>
+                    </a>
+                  }
+                />
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
