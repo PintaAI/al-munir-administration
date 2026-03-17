@@ -18,6 +18,7 @@ import {
   Shirt,
   DollarSign,
   FileText,
+  BookMarked,
 } from "lucide-react"
 
 import {
@@ -81,7 +82,8 @@ export function BendaharaSidebar({ role }: BendaharaSidebarProps) {
           { href: "spp", label: "SPP", icon: Receipt },
           { href: "syahriah", label: "Syahriah", icon: Receipt },
           { href: "ujian", label: "Ujian", icon: FileCheck },
-          { href: "buku", label: "Buku", icon: BookOpen },
+          { href: "buku-pendamping", label: "Buku Pendamping", icon: BookOpen },
+          { href: "tka", label: "TKA", icon: BookMarked },
         ]
       case "pondok":
         return [
