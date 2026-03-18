@@ -12,7 +12,7 @@ const prisma = new PrismaClient({ adapter });
 
 // Default amounts per jenisSantri (can be configured later in a settings table)
 const DEFAULT_AMOUNTS: Record<JenisSantri, { SPP: number; SYAHRIAH: number }> = {
-  SMK: { SPP: 350000, SYAHRIAH: 250000 },
+  SMK: { SPP: 250000, SYAHRIAH: 300000 },
   SMP: { SPP: 300000, SYAHRIAH: 200000 },
   PONDOK: { SPP: 250000, SYAHRIAH: 150000 },
 };
