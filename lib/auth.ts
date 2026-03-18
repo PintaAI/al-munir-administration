@@ -31,6 +31,11 @@ export const auth = betterAuth({
         defaultValue: "SANTRI",
         input: false, // Don't allow setting role during signup
       },
+      santriId: {
+        type: "string",
+        required: false,
+        input: false,
+      },
     },
   },
   plugins: [
