@@ -22,6 +22,17 @@ enum Role {
   SANTRI
 }
 
+enum JenisTagihan {
+  SPP
+  SYAHRIAH
+}
+
+enum StatusTagihan {
+  BELUM_LUNAS
+  LUNAS
+  OVERDUE
+}
+
 enum JenisTransaksi {
   SPP
   SYAHRIAH
@@ -146,6 +157,7 @@ model Santri {
   jenisSantri   JenisSantri      @default(PONDOK)
   user          User?            @relation
   transaksi     Transaksi[]
+  tagihan       Tagihan[]
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 
@@ -155,6 +167,30 @@ model Santri {
   @@index([beasiswa])
   @@index([jenisSantri])
   @@map("santri")
+}
+
+model Tagihan {
+  id              String              @id @default(cuid())
+  kode            String              @unique
+  santriId        String
+  santri          Santri              @relation(fields: [santriId], references: [id], onDelete: Cascade)
+  jenis           JenisTagihan
+  bulan           String
+  tahun           Int
+  jumlah          Int
+  status          StatusTagihan       @default(BELUM_LUNAS)
+  jatuhTempo      DateTime
+  transaksiId     String?
+  transaksi       Transaksi?          @relation(fields: [transaksiId], references: [id], onDelete: SetNull)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@unique([santriId, jenis, bulan, tahun])
+  @@index([santriId])
+  @@index([status])
+  @@index([tahun, bulan])
+  @@index([jenis])
+  @@map("tagihan")
 }
 
 model Transaksi {
@@ -174,6 +210,7 @@ model Transaksi {
   keterangan            String?
   managedBy             Role?                 @default(ADMIN)
   midtransTransactions  MidtransTransaction[]
+  tagihan               Tagihan[]
   createdAt             DateTime              @default(now())
   updatedAt             DateTime              @updatedAt
 

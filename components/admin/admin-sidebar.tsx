@@ -10,6 +10,7 @@ import {
   ChevronDown,
   LayoutDashboard,
   FileText,
+  Receipt,
 } from "lucide-react"
 
 import {
@@ -58,11 +59,11 @@ export function AdminSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  isActive={pathname === "/dashboard/admin/user-management"}
+                  isActive={pathname === "/dashboard/admin/staff-management"}
                   render={
-                    <Link href="/dashboard/admin/user-management">
+                    <Link href="/dashboard/admin/staff-management">
                       <Users className="h-4 w-4" />
-                      <span>User Management</span>
+                      <span>Staff Management</span>
                     </Link>
                   }
                 />
@@ -75,6 +76,18 @@ export function AdminSidebar() {
                     <Link href="/dashboard/admin/santri-management">
                       <GraduationCap className="h-4 w-4" />
                       <span>Santri Management</span>
+                    </Link>
+                  }
+                />
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={pathname === "/dashboard/admin/tagihan-management"}
+                  render={
+                    <Link href="/dashboard/admin/tagihan-management">
+                      <Receipt className="h-4 w-4" />
+                      <span>Tagihan Management</span>
                     </Link>
                   }
                 />

@@ -20,7 +20,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
-import { createColumns, User, Role } from "./columns";
+import { createColumns, Staff, Role } from "./columns";
 import { Plus, Users, Loader2 } from "lucide-react";
 
 interface FormData {
@@ -43,26 +43,26 @@ const roleLabels: Record<Role, string> = {
   SANTRI: "Santri",
 };
 
-export default function UserManagementPage() {
-  const [users, setUsers] = useState<User[]>([]);
+export default function StaffManagementPage() {
+  const [staff, setStaff] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [formData, setFormData] = useState<FormData>(initialFormData);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
-  const [deletingUser, setDeletingUser] = useState<User | null>(null);
+  const [editingStaff, setEditingStaff] = useState<Staff | null>(null);
+  const [deletingStaff, setDeletingStaff] = useState<Staff | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchUsers = useCallback(async () => {
+  const fetchStaff = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/users");
+      const response = await fetch("/api/staff");
       if (!response.ok) {
-        throw new Error("Failed to fetch users");
+        throw new Error("Failed to fetch staff");
       }
       const data = await response.json();
-      setUsers(data.users);
+      setStaff(data.staff);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -72,39 +72,39 @@ export default function UserManagementPage() {
   }, []);
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    fetchStaff();
+  }, [fetchStaff]);
 
   const handleOpenCreateDialog = () => {
-    setEditingUser(null);
+    setEditingStaff(null);
     setFormData(initialFormData);
     setIsDialogOpen(true);
   };
 
-  const handleOpenEditDialog = (user: User) => {
-    setEditingUser(user);
+  const handleOpenEditDialog = (staffMember: Staff) => {
+    setEditingStaff(staffMember);
     setFormData({
-      name: user.name,
-      email: user.email,
-      role: user.role,
+      name: staffMember.name,
+      email: staffMember.email,
+      role: staffMember.role,
     });
     setIsDialogOpen(true);
   };
 
-  const handleOpenDeleteDialog = (user: User) => {
-    setDeletingUser(user);
+  const handleOpenDeleteDialog = (staffMember: Staff) => {
+    setDeletingStaff(staffMember);
     setIsDeleteDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
-    setEditingUser(null);
+    setEditingStaff(null);
     setFormData(initialFormData);
   };
 
   const handleCloseDeleteDialog = () => {
     setIsDeleteDialogOpen(false);
-    setDeletingUser(null);
+    setDeletingStaff(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -112,8 +112,8 @@ export default function UserManagementPage() {
     setSubmitting(true);
 
     try {
-      const url = editingUser ? `/api/users/${editingUser.id}` : "/api/users";
-      const method = editingUser ? "PUT" : "POST";
+      const url = editingStaff ? `/api/staff/${editingStaff.id}` : "/api/staff";
+      const method = editingStaff ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method,
@@ -125,10 +125,10 @@ export default function UserManagementPage() {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Failed to save user");
+        throw new Error(data.error || "Failed to save staff");
       }
 
-      await fetchUsers();
+      await fetchStaff();
       handleCloseDialog();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -138,21 +138,21 @@ export default function UserManagementPage() {
   };
 
   const handleDelete = async () => {
-    if (!deletingUser) return;
+    if (!deletingStaff) return;
 
     setSubmitting(true);
 
     try {
-      const response = await fetch(`/api/users/${deletingUser.id}`, {
+      const response = await fetch(`/api/staff/${deletingStaff.id}`, {
         method: "DELETE",
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || "Failed to delete user");
+        throw new Error(data.error || "Failed to delete staff");
       }
 
-      await fetchUsers();
+      await fetchStaff();
       handleCloseDeleteDialog();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -161,15 +161,15 @@ export default function UserManagementPage() {
     }
   };
 
-  const handleToggleVerified = async (user: User) => {
+  const handleToggleVerified = async (staffMember: Staff) => {
     try {
-      const response = await fetch(`/api/users/${user.id}`, {
+      const response = await fetch(`/api/staff/${staffMember.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          emailVerified: !user.emailVerified,
+          emailVerified: !staffMember.emailVerified,
         }),
       });
 
@@ -178,7 +178,7 @@ export default function UserManagementPage() {
         throw new Error(data.error || "Failed to update verification status");
       }
 
-      await fetchUsers();
+      await fetchStaff();
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     }
@@ -194,12 +194,12 @@ export default function UserManagementPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
-          <p className="text-muted-foreground">Kelola pengguna sistem</p>
+          <h1 className="text-3xl font-bold tracking-tight">Staff Management</h1>
+          <p className="text-muted-foreground">Kelola staff sistem</p>
         </div>
         <Button onClick={handleOpenCreateDialog}>
           <Plus className="mr-2 h-4 w-4" />
-          Tambah User
+          Tambah Staff
         </Button>
       </div>
 
@@ -213,10 +213,10 @@ export default function UserManagementPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Daftar Pengguna
+            Daftar Staff
           </CardTitle>
           <CardDescription>
-            Total {users.length} pengguna terdaftar
+            Total {staff.length} staff terdaftar
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -225,7 +225,7 @@ export default function UserManagementPage() {
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
           ) : (
-            <DataTable columns={columns} data={users} />
+            <DataTable columns={columns} data={staff} />
           )}
         </CardContent>
       </Card>
@@ -235,7 +235,7 @@ export default function UserManagementPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editingUser ? "Edit Pengguna" : "Tambah Pengguna Baru"}
+              {editingStaff ? "Edit Staff" : "Tambah Staff Baru"}
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit}>
@@ -306,12 +306,12 @@ export default function UserManagementPage() {
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Hapus Pengguna</DialogTitle>
+            <DialogTitle>Hapus Staff</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <p className="text-sm text-muted-foreground">
-              Apakah Anda yakin ingin menghapus pengguna{" "}
-              <strong>{deletingUser?.name}</strong>? Tindakan ini tidak dapat
+              Apakah Anda yakin ingin menghapus staff{" "}
+              <strong>{deletingStaff?.name}</strong>? Tindakan ini tidak dapat
               dibatalkan.
             </p>
           </div>

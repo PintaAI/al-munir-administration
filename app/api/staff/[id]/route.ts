@@ -10,7 +10,7 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter });
 
-// GET - Get a single user by ID
+// GET - Get a single staff member by ID
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -26,7 +26,7 @@ export async function GET(
 
     const { id } = await params;
 
-    const user = await prisma.user.findUnique({
+    const staff = await prisma.user.findUnique({
       where: { id },
       select: {
         id: true,
@@ -40,21 +40,21 @@ export async function GET(
       },
     });
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!staff) {
+      return NextResponse.json({ error: "Staff not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ user });
+    return NextResponse.json({ staff });
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Error fetching staff:", error);
     return NextResponse.json(
-      { error: "Failed to fetch user" },
+      { error: "Failed to fetch staff" },
       { status: 500 }
     );
   }
 }
 
-// PUT - Update a user
+// PUT - Update a staff member
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -72,21 +72,21 @@ export async function PUT(
     const body = await request.json();
     const { name, email, role, emailVerified } = body;
 
-    // Check if user exists
-    const existingUser = await prisma.user.findUnique({
+    // Check if staff exists
+    const existingStaff = await prisma.user.findUnique({
       where: { id },
     });
 
-    if (!existingUser) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!existingStaff) {
+      return NextResponse.json({ error: "Staff not found" }, { status: 404 });
     }
 
     // If email is being changed, check for duplicates
-    if (email && email !== existingUser.email) {
-      const userWithEmail = await prisma.user.findUnique({
+    if (email && email !== existingStaff.email) {
+      const staffWithEmail = await prisma.user.findUnique({
         where: { email },
       });
-      if (userWithEmail) {
+      if (staffWithEmail) {
         return NextResponse.json(
           { error: "Email already in use" },
           { status: 400 }
@@ -94,7 +94,7 @@ export async function PUT(
       }
     }
 
-    const user = await prisma.user.update({
+    const staff = await prisma.user.update({
       where: { id },
       data: {
         ...(name !== undefined && { name }),
@@ -114,17 +114,17 @@ export async function PUT(
       },
     });
 
-    return NextResponse.json({ user });
+    return NextResponse.json({ staff });
   } catch (error) {
-    console.error("Error updating user:", error);
+    console.error("Error updating staff:", error);
     return NextResponse.json(
-      { error: "Failed to update user" },
+      { error: "Failed to update staff" },
       { status: 500 }
     );
   }
 }
 
-// DELETE - Delete a user
+// DELETE - Delete a staff member
 export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -148,24 +148,24 @@ export async function DELETE(
       );
     }
 
-    // Check if user exists
-    const existingUser = await prisma.user.findUnique({
+    // Check if staff exists
+    const existingStaff = await prisma.user.findUnique({
       where: { id },
     });
 
-    if (!existingUser) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!existingStaff) {
+      return NextResponse.json({ error: "Staff not found" }, { status: 404 });
     }
 
     await prisma.user.delete({
       where: { id },
     });
 
-    return NextResponse.json({ message: "User deleted successfully" });
+    return NextResponse.json({ message: "Staff deleted successfully" });
   } catch (error) {
-    console.error("Error deleting user:", error);
+    console.error("Error deleting staff:", error);
     return NextResponse.json(
-      { error: "Failed to delete user" },
+      { error: "Failed to delete staff" },
       { status: 500 }
     );
   }

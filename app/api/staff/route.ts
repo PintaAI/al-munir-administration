@@ -10,7 +10,7 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter });
 
-// GET - List all users
+// GET - List all staff (non-SANTRI users)
 export async function GET(_request: NextRequest) {
   try {
     const session = await auth.api.getSession({
@@ -21,7 +21,7 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const users = await prisma.user.findMany({
+    const staff = await prisma.user.findMany({
       where: {
         NOT: {
           role: "SANTRI",
@@ -42,17 +42,17 @@ export async function GET(_request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ users });
+    return NextResponse.json({ staff });
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.error("Error fetching staff:", error);
     return NextResponse.json(
-      { error: "Failed to fetch users" },
+      { error: "Failed to fetch staff" },
       { status: 500 }
     );
   }
 }
 
-// POST - Create a new user
+// POST - Create a new staff member
 export async function POST(request: NextRequest) {
   try {
     const session = await auth.api.getSession({
@@ -73,19 +73,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user with email already exists
-    const existingUser = await prisma.user.findUnique({
+    // Check if staff with email already exists
+    const existingStaff = await prisma.user.findUnique({
       where: { email },
     });
 
-    if (existingUser) {
+    if (existingStaff) {
       return NextResponse.json(
-        { error: "User with this email already exists" },
+        { error: "Staff with this email already exists" },
         { status: 400 }
       );
     }
 
-    const user = await prisma.user.create({
+    const staff = await prisma.user.create({
       data: {
         id: crypto.randomUUID(),
         name,
@@ -105,11 +105,11 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ user }, { status: 201 });
+    return NextResponse.json({ staff }, { status: 201 });
   } catch (error) {
-    console.error("Error creating user:", error);
+    console.error("Error creating staff:", error);
     return NextResponse.json(
-      { error: "Failed to create user" },
+      { error: "Failed to create staff" },
       { status: 500 }
     );
   }

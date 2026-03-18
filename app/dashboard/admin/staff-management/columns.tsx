@@ -15,7 +15,7 @@ import {
 
 export type Role = "ADMIN" | "BENDAHARA_SMK" | "BENDAHARA_SMP" | "BENDAHARA_PONDOK" | "SANTRI";
 
-export interface User {
+export interface Staff {
   id: string;
   name: string;
   email: string;
@@ -27,9 +27,9 @@ export interface User {
 }
 
 interface ColumnOptions {
-  onEdit: (user: User) => void;
-  onDelete: (user: User) => void;
-  onToggleVerified: (user: User) => void;
+  onEdit: (staff: Staff) => void;
+  onDelete: (staff: Staff) => void;
+  onToggleVerified: (staff: Staff) => void;
 }
 
 const roleLabels: Record<Role, string> = {
@@ -40,16 +40,16 @@ const roleLabels: Record<Role, string> = {
   SANTRI: "Santri",
 };
 
-export const createColumns = ({ onEdit, onDelete, onToggleVerified }: ColumnOptions): ColumnDef<User>[] => [
+export const createColumns = ({ onEdit, onDelete, onToggleVerified }: ColumnOptions): ColumnDef<Staff>[] => [
   {
-    id: "user",
+    id: "staff",
     header: "Nama",
     cell: ({ row }) => {
-      const user = row.original;
+      const staff = row.original;
       return (
         <div className="flex flex-col">
-          <div className="font-medium">{user.name}</div>
-          <div className="text-sm text-muted-foreground">{user.email}</div>
+          <div className="font-medium">{staff.name}</div>
+          <div className="text-sm text-muted-foreground">{staff.email}</div>
         </div>
       );
     },
@@ -70,11 +70,11 @@ export const createColumns = ({ onEdit, onDelete, onToggleVerified }: ColumnOpti
     accessorKey: "emailVerified",
     header: "Status",
     cell: ({ row }) => {
-      const user = row.original;
-      const verified = user.emailVerified;
+      const staff = row.original;
+      const verified = staff.emailVerified;
       return (
         <button
-          onClick={() => onToggleVerified(user)}
+          onClick={() => onToggleVerified(staff)}
           className="cursor-pointer transition-opacity hover:opacity-80"
           title="Klik untuk mengubah status verifikasi"
         >
@@ -110,7 +110,7 @@ export const createColumns = ({ onEdit, onDelete, onToggleVerified }: ColumnOpti
   {
     id: "actions",
     cell: ({ row }) => {
-      const user = row.original;
+      const staff = row.original;
 
       return (
         <DropdownMenu>
@@ -123,18 +123,18 @@ export const createColumns = ({ onEdit, onDelete, onToggleVerified }: ColumnOpti
           <DropdownMenuContent align="end">
             <DropdownMenuGroup>
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(user.id)}>
-                Copy user ID
+              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(staff.id)}>
+                Copy staff ID
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => onEdit(user)}>
+              <DropdownMenuItem onClick={() => onEdit(staff)}>
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => onDelete(user)}
+                onClick={() => onDelete(staff)}
                 className="text-destructive focus:text-destructive"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
