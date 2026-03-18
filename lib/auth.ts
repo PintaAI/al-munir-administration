@@ -32,6 +32,11 @@ export const auth = betterAuth({
         defaultValue: "SANTRI",
         input: false,
       },
+      santriId: {
+        type: "string",
+        required: false,
+        input: false,
+      },
     },
   },
   plugins: [
