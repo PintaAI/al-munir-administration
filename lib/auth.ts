@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
+import { admin } from "better-auth/plugins";
 import { PrismaClient } from "./generated/prisma";
 import { PrismaPg } from "@prisma/adapter-pg";
 
@@ -29,12 +30,16 @@ export const auth = betterAuth({
         type: "string",
         required: true,
         defaultValue: "SANTRI",
-        input: false, // Don't allow setting role during signup
+        input: false,
       },
     },
   },
   plugins: [
     nextCookies(), // Required for server actions to set cookies
+    admin({
+      adminRole: "ADMIN",
+      defaultRole: "SANTRI",
+    }),
   ],
 });
 

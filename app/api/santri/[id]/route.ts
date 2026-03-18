@@ -3,7 +3,6 @@ import { PrismaClient } from "@/lib/generated/prisma";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { hashPassword } from "@/lib/password-hash";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
@@ -152,12 +151,13 @@ export async function PUT(
           });
         }
 
-        // Update password if provided
+        // Update password if provided using admin API
         if (password) {
-          const hashedPassword = await hashPassword(password);
-          await tx.account.updateMany({
-            where: { userId: existingSantri.userId },
-            data: { password: hashedPassword },
+          await auth.api.setUserPassword({
+            body: {
+              userId: existingSantri.userId,
+              newPassword: password,
+            },
           });
         }
       }

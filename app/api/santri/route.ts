@@ -3,8 +3,6 @@ import { PrismaClient } from "@/lib/generated/prisma";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { hashPassword } from "@/lib/password-hash";
-import { nanoid } from "nanoid";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
@@ -118,76 +116,62 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Hash the password
-    const hashedPassword = await hashPassword(password);
+    // Use better-auth admin.createUser API to properly hash the password
+    // The defaultRole in admin plugin config will set role to "SANTRI"
+    const result = await auth.api.createUser({
+      body: {
+        email: email,
+        password: password,
+        name: nama,
+      },
+    });
 
-    // Generate IDs for user and account
-    const userId = nanoid();
-    const accountId = nanoid();
+    // Extract user id from the response
+    const userId = (result as { user: { id: string } }).user.id;
+    
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Failed to create user" },
+        { status: 500 }
+      );
+    }
 
-    // Create user, account, and santri in a transaction
-    const santri = await prisma.$transaction(async (tx) => {
-      // Create user
-      const user = await tx.user.create({
-        data: {
-          id: userId,
-          email: email,
-          name: nama,
-          role: "SANTRI",
-          emailVerified: false,
-        },
-      });
-
-      // Create account with credentials provider (for password auth)
-      await tx.account.create({
-        data: {
-          id: accountId,
-          accountId: userId,
-          providerId: "credential",
-          userId: userId,
-          password: hashedPassword,
-        },
-      });
-
-      // Create santri linked to user
-      const newSantri = await tx.santri.create({
-        data: {
-          nis,
-          nama,
-          kelas,
-          asrama,
-          wali,
-          status: status || "AKTIF",
-          beasiswa: beasiswa || false,
-          jenisBeasiswa: jenisBeasiswa || null,
-          jenisSantri: jenisSantri || "PONDOK",
-          userId: user.id,
-        },
-        select: {
-          id: true,
-          nis: true,
-          nama: true,
-          kelas: true,
-          asrama: true,
-          wali: true,
-          status: true,
-          beasiswa: true,
-          jenisBeasiswa: true,
-          jenisSantri: true,
-          userId: true,
-          user: {
-            select: {
-              id: true,
-              email: true,
-              name: true,
-            },
+    // Create santri linked to user
+    const santri = await prisma.santri.create({
+      data: {
+        nis,
+        nama,
+        kelas,
+        asrama,
+        wali,
+        status: status || "AKTIF",
+        beasiswa: beasiswa || false,
+        jenisBeasiswa: jenisBeasiswa || null,
+        jenisSantri: jenisSantri || "PONDOK",
+        userId: userId,
+      },
+      select: {
+        id: true,
+        nis: true,
+        nama: true,
+        kelas: true,
+        asrama: true,
+        wali: true,
+        status: true,
+        beasiswa: true,
+        jenisBeasiswa: true,
+        jenisSantri: true,
+        userId: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
           },
-          createdAt: true,
-          updatedAt: true,
         },
-      });
-
-      return newSantri;
+        createdAt: true,
+        updatedAt: true,
+      },
     });
 
     return NextResponse.json({ santri }, { status: 201 });
