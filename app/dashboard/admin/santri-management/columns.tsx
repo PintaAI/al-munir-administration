@@ -30,6 +30,12 @@ export interface Santri {
   beasiswa: boolean;
   jenisBeasiswa: JenisBeasiswa | null;
   jenisSantri: JenisSantri;
+  userId: string | null;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+  } | null;
   createdAt: string;
   updatedAt: string;
 }

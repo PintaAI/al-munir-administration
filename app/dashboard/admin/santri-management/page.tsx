@@ -16,7 +16,6 @@ import {
   Card,
   CardHeader,
   CardTitle,
-  CardDescription,
   CardContent,
 } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
@@ -42,6 +41,8 @@ interface FormData {
   beasiswa: boolean;
   jenisBeasiswa: JenisBeasiswa | null;
   jenisSantri: JenisSantri;
+  email: string;
+  password: string;
 }
 
 const initialFormData: FormData = {
@@ -54,6 +55,8 @@ const initialFormData: FormData = {
   beasiswa: false,
   jenisBeasiswa: null,
   jenisSantri: "PONDOK",
+  email: "",
+  password: "",
 };
 
 const statusOptions: { value: StatusSantri; label: string }[] = [
@@ -128,6 +131,8 @@ export default function SantriManagementPage() {
       beasiswa: santri.beasiswa,
       jenisBeasiswa: santri.jenisBeasiswa,
       jenisSantri: santri.jenisSantri,
+      email: santri.user?.email || "",
+      password: "",
     });
     setIsDialogOpen(true);
   };
@@ -411,6 +416,34 @@ export default function SantriManagementPage() {
                   }
                   placeholder="Nama wali"
                   required
+                />
+              </div>
+              <div className="col-span-2 space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  placeholder="Email untuk login"
+                  required={!editingSantri}
+                />
+              </div>
+              <div className="col-span-2 space-y-2">
+                <Label htmlFor="password">
+                  {editingSantri ? "Password Baru (kosongkan jika tidak diubah)" : "Password"}
+                </Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  placeholder={editingSantri ? "Kosongkan jika tidak diubah" : "Password untuk login"}
+                  required={!editingSantri}
                 />
               </div>
               <div className="space-y-2">

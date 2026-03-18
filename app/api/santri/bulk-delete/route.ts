@@ -10,7 +10,7 @@ const adapter = new PrismaPg({
 
 const prisma = new PrismaClient({ adapter });
 
-// POST - Bulk delete santri
+// POST - Bulk delete santri (cascade will delete related users)
 export async function POST(request: NextRequest) {
   try {
     const session = await auth.api.getSession({
@@ -31,18 +31,48 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Delete multiple santri records
-    const result = await prisma.santri.deleteMany({
+    // Get all santri with their userIds
+    const santriList = await prisma.santri.findMany({
       where: {
-        id: {
-          in: ids,
-        },
+        id: { in: ids },
+      },
+      select: {
+        id: true,
+        userId: true,
       },
     });
 
+    const userIds = santriList
+      .map((s) => s.userId)
+      .filter((id): id is string => id !== null);
+
+    const santriIdsWithoutUser = santriList
+      .filter((s) => s.userId === null)
+      .map((s) => s.id);
+
+    // Delete users - cascade will automatically delete related santri
+    if (userIds.length > 0) {
+      await prisma.user.deleteMany({
+        where: {
+          id: { in: userIds },
+        },
+      });
+    }
+
+    // Delete santri without users directly
+    let orphanCount = 0;
+    if (santriIdsWithoutUser.length > 0) {
+      const result = await prisma.santri.deleteMany({
+        where: {
+          id: { in: santriIdsWithoutUser },
+        },
+      });
+      orphanCount = result.count;
+    }
+
     return NextResponse.json({
       success: true,
-      deletedCount: result.count,
+      deletedCount: userIds.length + orphanCount,
     });
   } catch (error) {
     console.error("Error bulk deleting santri:", error);

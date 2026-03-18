@@ -3,6 +3,8 @@ import { PrismaClient } from "@/lib/generated/prisma";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { hashPassword } from "@/lib/password-hash";
+import { nanoid } from "nanoid";
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
@@ -33,6 +35,14 @@ export async function GET(_request: NextRequest) {
         beasiswa: true,
         jenisBeasiswa: true,
         jenisSantri: true,
+        userId: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
         createdAt: true,
         updatedAt: true,
       },
@@ -51,7 +61,7 @@ export async function GET(_request: NextRequest) {
   }
 }
 
-// POST - Create a new santri
+// POST - Create a new santri with user account
 export async function POST(request: NextRequest) {
   try {
     const session = await auth.api.getSession({
@@ -73,11 +83,13 @@ export async function POST(request: NextRequest) {
       beasiswa,
       jenisBeasiswa,
       jenisSantri,
+      email,
+      password,
     } = body;
 
-    if (!nis || !nama || !kelas || !asrama || !wali) {
+    if (!nis || !nama || !kelas || !asrama || !wali || !email || !password) {
       return NextResponse.json(
-        { error: "NIS, nama, kelas, asrama, dan wali wajib diisi" },
+        { error: "NIS, nama, kelas, asrama, wali, email, dan password wajib diisi" },
         { status: 400 }
       );
     }
@@ -94,32 +106,88 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const santri = await prisma.santri.create({
-      data: {
-        nis,
-        nama,
-        kelas,
-        asrama,
-        wali,
-        status: status || "AKTIF",
-        beasiswa: beasiswa || false,
-        jenisBeasiswa: jenisBeasiswa || null,
-        jenisSantri: jenisSantri || "PONDOK",
-      },
-      select: {
-        id: true,
-        nis: true,
-        nama: true,
-        kelas: true,
-        asrama: true,
-        wali: true,
-        status: true,
-        beasiswa: true,
-        jenisBeasiswa: true,
-        jenisSantri: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+    // Check if user with email already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "User dengan email ini sudah ada" },
+        { status: 400 }
+      );
+    }
+
+    // Hash the password
+    const hashedPassword = await hashPassword(password);
+
+    // Generate IDs for user and account
+    const userId = nanoid();
+    const accountId = nanoid();
+
+    // Create user, account, and santri in a transaction
+    const santri = await prisma.$transaction(async (tx) => {
+      // Create user
+      const user = await tx.user.create({
+        data: {
+          id: userId,
+          email: email,
+          name: nama,
+          role: "SANTRI",
+          emailVerified: false,
+        },
+      });
+
+      // Create account with credentials provider (for password auth)
+      await tx.account.create({
+        data: {
+          id: accountId,
+          accountId: userId,
+          providerId: "credential",
+          userId: userId,
+          password: hashedPassword,
+        },
+      });
+
+      // Create santri linked to user
+      const newSantri = await tx.santri.create({
+        data: {
+          nis,
+          nama,
+          kelas,
+          asrama,
+          wali,
+          status: status || "AKTIF",
+          beasiswa: beasiswa || false,
+          jenisBeasiswa: jenisBeasiswa || null,
+          jenisSantri: jenisSantri || "PONDOK",
+          userId: user.id,
+        },
+        select: {
+          id: true,
+          nis: true,
+          nama: true,
+          kelas: true,
+          asrama: true,
+          wali: true,
+          status: true,
+          beasiswa: true,
+          jenisBeasiswa: true,
+          jenisSantri: true,
+          userId: true,
+          user: {
+            select: {
+              id: true,
+              email: true,
+              name: true,
+            },
+          },
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+
+      return newSantri;
     });
 
     return NextResponse.json({ santri }, { status: 201 });

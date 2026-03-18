@@ -89,8 +89,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
-  santri        Santri?   @relation(fields: [santriId], references: [id], onDelete: Cascade)
-  santriId      String?   @unique
+  santri        Santri?
 
   @@unique([email])
   @@map("user")
@@ -155,7 +154,8 @@ model Santri {
   beasiswa      Boolean          @default(false)
   jenisBeasiswa JenisBeasiswa?
   jenisSantri   JenisSantri      @default(PONDOK)
-  user          User?            @relation
+  userId        String?          @unique
+  user          User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
   transaksi     Transaksi[]
   tagihan       Tagihan[]
   createdAt     DateTime         @default(now())
@@ -166,6 +166,7 @@ model Santri {
   @@index([status])
   @@index([beasiswa])
   @@index([jenisSantri])
+  @@index([userId])
   @@map("santri")
 }
 
