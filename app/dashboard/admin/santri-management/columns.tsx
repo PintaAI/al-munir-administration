@@ -4,6 +4,7 @@ import { ColumnDef, Row } from "@tanstack/react-table";
 import { Pencil, Trash2, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,11 +46,11 @@ const statusLabels: Record<StatusSantri, string> = {
   KELUAR: "Keluar",
 };
 
-const statusColors: Record<StatusSantri, string> = {
-  AKTIF: "bg-green-500/10 text-green-600 dark:text-green-400",
-  NON_AKTIF: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
-  LULUS: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
-  KELUAR: "bg-red-500/10 text-red-600 dark:text-red-400",
+const statusVariants: Record<StatusSantri, "default" | "secondary" | "destructive" | "outline"> = {
+  AKTIF: "default",
+  NON_AKTIF: "secondary",
+  LULUS: "outline",
+  KELUAR: "destructive",
 };
 
 const jenisSantriLabels: Record<JenisSantri, string> = {
@@ -58,10 +59,10 @@ const jenisSantriLabels: Record<JenisSantri, string> = {
   PONDOK: "Pondok",
 };
 
-const jenisSantriColors: Record<JenisSantri, string> = {
-  SMK: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
-  SMP: "bg-orange-500/10 text-orange-600 dark:text-orange-400",
-  PONDOK: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+const jenisSantriVariants: Record<JenisSantri, "default" | "secondary" | "destructive" | "outline"> = {
+  SMK: "default",
+  SMP: "secondary",
+  PONDOK: "outline",
 };
 
 const jenisBeasiswaLabels: Record<JenisBeasiswa, string> = {
@@ -107,9 +108,9 @@ export const createColumns = ({ onEdit, onDelete }: ColumnOptions): ColumnDef<Sa
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <span className="font-medium">{santri.nama}</span>
-            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${jenisSantriColors[santri.jenisSantri]}`}>
+            <Badge variant={jenisSantriVariants[santri.jenisSantri]}>
               {jenisSantriLabels[santri.jenisSantri]}
-            </span>
+            </Badge>
           </div>
           <div className="text-sm text-muted-foreground">{santri.nis}</div>
         </div>
@@ -137,9 +138,9 @@ export const createColumns = ({ onEdit, onDelete }: ColumnOptions): ColumnDef<Sa
     cell: ({ row }) => {
       const status = row.getValue("status") as StatusSantri;
       return (
-        <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${statusColors[status]}`}>
+        <Badge variant={statusVariants[status]}>
           {statusLabels[status]}
-        </span>
+        </Badge>
       );
     },
   },
@@ -154,9 +155,9 @@ export const createColumns = ({ onEdit, onDelete }: ColumnOptions): ColumnDef<Sa
         );
       }
       return (
-        <span className="inline-flex items-center rounded-full bg-purple-500/10 px-2 py-1 text-xs font-medium text-purple-600 dark:text-purple-400">
+        <Badge variant="secondary">
           {santri.jenisBeasiswa ? jenisBeasiswaLabels[santri.jenisBeasiswa] : "Ya"}
-        </span>
+        </Badge>
       );
     },
   },

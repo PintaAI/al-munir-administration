@@ -21,7 +21,8 @@ import {
 } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
 import { createColumns, Staff, Role } from "./columns";
-import { Plus, Users, Loader2 } from "lucide-react";
+import { Plus, Users, Loader2, UserCheck, UserX, Shield } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface FormData {
   name: string;
@@ -190,11 +191,17 @@ export default function StaffManagementPage() {
     onToggleVerified: handleToggleVerified,
   });
 
+  // Calculate summary
+  const totalStaff = staff.length;
+  const verifiedStaff = staff.filter((s) => s.emailVerified).length;
+  const unverifiedStaff = staff.filter((s) => !s.emailVerified).length;
+  const adminCount = staff.filter((s) => s.role === "ADMIN").length;
+
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Staff Management</h1>
+          <h1 className="text-2xl font-bold">Manajemen Staff</h1>
           <p className="text-muted-foreground">Kelola staff sistem</p>
         </div>
         <Button onClick={handleOpenCreateDialog}>
@@ -203,23 +210,56 @@ export default function StaffManagementPage() {
         </Button>
       </div>
 
+      {/* Summary Cards */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Staff</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalStaff}</div>
+            <p className="text-xs text-muted-foreground">Terdaftar</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Terverifikasi</CardTitle>
+            <Badge>{verifiedStaff}</Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{verifiedStaff}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Belum Verifikasi</CardTitle>
+            <Badge variant="secondary">{unverifiedStaff}</Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{unverifiedStaff}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Admin</CardTitle>
+            <Shield className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{adminCount}</div>
+          </CardContent>
+        </Card>
+      </div>
+
       {error && (
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
           <p className="text-sm text-destructive">{error}</p>
         </div>
       )}
 
+      {/* Data Table */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            Daftar Staff
-          </CardTitle>
-          <CardDescription>
-            Total {staff.length} staff terdaftar
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />

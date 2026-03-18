@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import {
   Users,
   GraduationCap,
@@ -31,7 +31,8 @@ import { ModeToggle } from "@/components/theme-toggle"
 
 export function AdminSidebar() {
   const pathname = usePathname()
-  const isTransaksiPath = pathname?.startsWith("/dashboard/admin/transaksi")
+  const searchParams = useSearchParams()
+  const isTransaksiPath = pathname === "/dashboard/admin/transaksi"
   const [isTransaksiOpen, setIsTransaksiOpen] = React.useState(isTransaksiPath ?? false)
 
   React.useEffect(() => {
@@ -39,6 +40,8 @@ export function AdminSidebar() {
       setIsTransaksiOpen(true)
     }
   }, [isTransaksiPath])
+
+  const activeTab = searchParams.get("tab") || "SPP"
 
   return (
     <Sidebar collapsible="offcanvas">
@@ -109,9 +112,9 @@ export function AdminSidebar() {
                   <SidebarMenuSub>
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton
-                        isActive={pathname === "/dashboard/admin/transaksi/spp"}
+                        isActive={isTransaksiPath && activeTab === "SPP"}
                         render={
-                          <Link href="/dashboard/admin/transaksi/spp">
+                          <Link href="/dashboard/admin/transaksi?tab=SPP">
                             <span>SPP</span>
                           </Link>
                         }
@@ -119,9 +122,9 @@ export function AdminSidebar() {
                     </SidebarMenuSubItem>
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton
-                        isActive={pathname === "/dashboard/admin/transaksi/syahriah"}
+                        isActive={isTransaksiPath && activeTab === "SYAHRIAH"}
                         render={
-                          <Link href="/dashboard/admin/transaksi/syahriah">
+                          <Link href="/dashboard/admin/transaksi?tab=SYAHRIAH">
                             <span>Syahriah</span>
                           </Link>
                         }
@@ -129,9 +132,9 @@ export function AdminSidebar() {
                     </SidebarMenuSubItem>
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton
-                        isActive={pathname === "/dashboard/admin/transaksi/uang-saku"}
+                        isActive={isTransaksiPath && activeTab === "UANG_SAKU"}
                         render={
-                          <Link href="/dashboard/admin/transaksi/uang-saku">
+                          <Link href="/dashboard/admin/transaksi?tab=UANG_SAKU">
                             <span>Uang Saku</span>
                           </Link>
                         }
@@ -139,9 +142,9 @@ export function AdminSidebar() {
                     </SidebarMenuSubItem>
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton
-                        isActive={pathname === "/dashboard/admin/transaksi/laundry"}
+                        isActive={isTransaksiPath && activeTab === "LAUNDRY"}
                         render={
-                          <Link href="/dashboard/admin/transaksi/laundry">
+                          <Link href="/dashboard/admin/transaksi?tab=LAUNDRY">
                             <span>Laundry</span>
                           </Link>
                         }

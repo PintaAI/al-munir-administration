@@ -28,8 +28,9 @@ import {
   JenisSantri,
   JenisBeasiswa,
 } from "./columns";
-import { Plus, Users, Loader2, Trash2 } from "lucide-react";
+import { Plus, Users, Loader2, Trash2, GraduationCap, UserCheck } from "lucide-react";
 import { RowSelectionState } from "@tanstack/react-table";
+import { Badge } from "@/components/ui/badge";
 
 interface FormData {
   nis: string;
@@ -245,11 +246,17 @@ export default function SantriManagementPage() {
 
   const selectedCount = Object.keys(rowSelection).length;
 
+  // Calculate summary
+  const totalSantri = santriList.length;
+  const aktifSantri = santriList.filter((s) => s.status === "AKTIF").length;
+  const nonAktifSantri = santriList.filter((s) => s.status === "NON_AKTIF").length;
+  const beasiswaSantri = santriList.filter((s) => s.beasiswa).length;
+
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Santri Management</h1>
+          <h1 className="text-2xl font-bold">Manajemen Santri</h1>
           <p className="text-muted-foreground">Kelola data santri</p>
         </div>
         <div className="flex items-center gap-2">
@@ -269,24 +276,56 @@ export default function SantriManagementPage() {
         </div>
       </div>
 
+      {/* Summary Cards */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Santri</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalSantri}</div>
+            <p className="text-xs text-muted-foreground">Terdaftar</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Aktif</CardTitle>
+            <Badge>{aktifSantri}</Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{aktifSantri}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Non-Aktif</CardTitle>
+            <Badge variant="secondary">{nonAktifSantri}</Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{nonAktifSantri}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Beasiswa</CardTitle>
+            <GraduationCap className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{beasiswaSantri}</div>
+          </CardContent>
+        </Card>
+      </div>
+
       {error && (
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
           <p className="text-sm text-destructive">{error}</p>
         </div>
       )}
 
+      {/* Data Table */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            Daftar Santri
-          </CardTitle>
-          <CardDescription>
-            Total {santriList.length} santri terdaftar
-            {selectedCount > 0 && ` • ${selectedCount} dipilih`}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />

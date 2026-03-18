@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUpDown, Pencil, Trash2 } from "lucide-react";
-import { Transaksi, STATUS_TRANSAKSI_OPTIONS, STATUS_UANG_SAKU_OPTIONS, BULAN_OPTIONS } from "@/lib/types/transaksi";
+import { Transaksi, JenisTransaksi, STATUS_TRANSAKSI_OPTIONS, STATUS_UANG_SAKU_OPTIONS, BULAN_OPTIONS } from "@/lib/types/transaksi";
 
 // Format currency to Indonesian Rupiah
 export function formatCurrency(amount: number): string {
@@ -27,12 +27,12 @@ export function formatDate(date: Date | string | null): string {
   }).format(d);
 }
 
-// Status badge colors
-const statusColors: Record<string, string> = {
-  LUNAS: "bg-green-500/10 text-green-600 dark:text-green-400",
-  PENDING: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
-  BELUM_BAYAR: "bg-red-500/10 text-red-600 dark:text-red-400",
-  DITOLAK: "bg-gray-500/10 text-gray-600 dark:text-gray-400",
+// Status badge variants
+const statusVariants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+  LUNAS: "default",
+  PENDING: "secondary",
+  BELUM_BAYAR: "destructive",
+  DITOLAK: "outline",
 };
 
 const statusLabels: Record<string, string> = {
@@ -42,9 +42,9 @@ const statusLabels: Record<string, string> = {
   DITOLAK: "Ditolak",
 };
 
-const statusUangSakuColors: Record<string, string> = {
-  DITAMBAH: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
-  DIAMBIL: "bg-orange-500/10 text-orange-600 dark:text-orange-400",
+const statusUangSakuVariants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+  DITAMBAH: "default",
+  DIAMBIL: "secondary",
 };
 
 const statusUangSakuLabels: Record<string, string> = {
@@ -55,18 +55,18 @@ const statusUangSakuLabels: Record<string, string> = {
 // Status Badge Component
 export function StatusBadge({ status }: { status: string }) {
   return (
-    <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${statusColors[status] || "bg-gray-500/10 text-gray-600"}`}>
+    <Badge variant={statusVariants[status] || "outline"}>
       {statusLabels[status] || status}
-    </span>
+    </Badge>
   );
 }
 
 // Status Uang Saku Badge Component
 export function StatusUangSakuBadge({ status }: { status: string }) {
   return (
-    <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${statusUangSakuColors[status] || "bg-gray-500/10 text-gray-600"}`}>
+    <Badge variant={statusUangSakuVariants[status] || "outline"}>
       {statusUangSakuLabels[status] || status}
-    </span>
+    </Badge>
   );
 }
 
@@ -263,7 +263,7 @@ function createActionsColumn(options: ColumnOptions): ColumnDef<Transaksi> {
 
 // Main function to get columns based on transaction type
 export function getTransaksiColumns(
-  jenis: "SPP" | "SYAHRIAH" | "UANG_SAKU" | "LAUNDRY",
+  jenis: JenisTransaksi,
   options: ColumnOptions = {}
 ): ColumnDef<Transaksi>[] {
   const columns: ColumnDef<Transaksi>[] = [...baseColumns];

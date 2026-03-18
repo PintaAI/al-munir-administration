@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Pencil, Trash2, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,9 +61,9 @@ export const createColumns = ({ onEdit, onDelete, onToggleVerified }: ColumnOpti
     cell: ({ row }) => {
       const role = row.getValue("role") as Role;
       return (
-        <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+        <Badge variant="secondary">
           {roleLabels[role]}
-        </span>
+        </Badge>
       );
     },
   },
@@ -79,13 +80,9 @@ export const createColumns = ({ onEdit, onDelete, onToggleVerified }: ColumnOpti
           title="Klik untuk mengubah status verifikasi"
         >
           {verified ? (
-            <span className="inline-flex items-center rounded-full bg-green-500/10 px-2 py-1 text-xs font-medium text-green-600 dark:text-green-400">
-              Terverifikasi
-            </span>
+            <Badge variant="default">Terverifikasi</Badge>
           ) : (
-            <span className="inline-flex items-center rounded-full bg-yellow-500/10 px-2 py-1 text-xs font-medium text-yellow-600 dark:text-yellow-400">
-              Belum Verifikasi
-            </span>
+            <Badge variant="outline">Belum Verifikasi</Badge>
           )}
         </button>
       );
