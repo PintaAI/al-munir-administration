@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   Users,
@@ -114,10 +115,10 @@ export function BendaharaSidebar({ role }: BendaharaSidebarProps) {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   render={
-                    <a href={basePath}>
+                    <Link href={basePath}>
                       <Home className="h-4 w-4" />
                       <span>Dashboard</span>
-                    </a>
+                    </Link>
                   }
                 />
               </SidebarMenuItem>
@@ -125,10 +126,10 @@ export function BendaharaSidebar({ role }: BendaharaSidebarProps) {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   render={
-                    <a href={`${basePath}/santri-management`}>
+                    <Link href={`${basePath}/santri-management`}>
                       <GraduationCap className="h-4 w-4" />
                       <span>Santri Management</span>
-                    </a>
+                    </Link>
                   }
                 />
               </SidebarMenuItem>
@@ -154,10 +155,10 @@ export function BendaharaSidebar({ role }: BendaharaSidebarProps) {
                         <SidebarMenuSubItem key={item.href}>
                           <SidebarMenuSubButton
                             render={
-                              <a href={`${basePath}/transaksi/${item.href}`}>
+                              <Link href={`${basePath}/transaksi/${item.href}`}>
                                 <Icon className="h-4 w-4" />
                                 <span>{item.label}</span>
-                              </a>
+                              </Link>
                             }
                           />
                         </SidebarMenuSubItem>
@@ -171,10 +172,10 @@ export function BendaharaSidebar({ role }: BendaharaSidebarProps) {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     render={
-                      <a href={`${basePath}/laporan-keuangan`}>
+                      <Link href={`${basePath}/laporan-keuangan`}>
                         <FileText className="h-4 w-4" />
                         <span>Laporan Keuangan</span>
-                      </a>
+                      </Link>
                     }
                   />
                 </SidebarMenuItem>

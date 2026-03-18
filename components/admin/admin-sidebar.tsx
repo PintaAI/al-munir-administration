@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   Users,
@@ -25,6 +26,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import { ModeToggle } from "@/components/theme-toggle"
 
 export function AdminSidebar() {
   const pathname = usePathname()
@@ -40,9 +42,12 @@ export function AdminSidebar() {
   return (
     <Sidebar collapsible="offcanvas">
       <SidebarHeader className="border-b border-sidebar-border">
-        <div className="flex items-center gap-2 px-2 py-2">
-          <LayoutDashboard className="h-6 w-6" />
-          <span className="text-lg font-semibold">Admin Panel</span>
+        <div className="flex items-center justify-between px-2 py-2">
+          <div className="flex items-center gap-2">
+            <LayoutDashboard className="h-6 w-6" />
+            <span className="text-lg font-semibold">Admin Panel</span>
+          </div>
+          <ModeToggle />
         </div>
       </SidebarHeader>
 
@@ -53,22 +58,24 @@ export function AdminSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
+                  isActive={pathname === "/dashboard/admin/user-management"}
                   render={
-                    <a href="/dashboard/admin/user-management">
+                    <Link href="/dashboard/admin/user-management">
                       <Users className="h-4 w-4" />
                       <span>User Management</span>
-                    </a>
+                    </Link>
                   }
                 />
               </SidebarMenuItem>
 
               <SidebarMenuItem>
                 <SidebarMenuButton
+                  isActive={pathname === "/dashboard/admin/santri-management"}
                   render={
-                    <a href="/dashboard/admin/santri-management">
+                    <Link href="/dashboard/admin/santri-management">
                       <GraduationCap className="h-4 w-4" />
                       <span>Santri Management</span>
-                    </a>
+                    </Link>
                   }
                 />
               </SidebarMenuItem>
@@ -89,37 +96,41 @@ export function AdminSidebar() {
                   <SidebarMenuSub>
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton
+                        isActive={pathname === "/dashboard/admin/transaksi/spp"}
                         render={
-                          <a href="/dashboard/admin/transaksi/spp">
+                          <Link href="/dashboard/admin/transaksi/spp">
                             <span>SPP</span>
-                          </a>
+                          </Link>
                         }
                       />
                     </SidebarMenuSubItem>
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton
+                        isActive={pathname === "/dashboard/admin/transaksi/syahriah"}
                         render={
-                          <a href="/dashboard/admin/transaksi/syahriah">
+                          <Link href="/dashboard/admin/transaksi/syahriah">
                             <span>Syahriah</span>
-                          </a>
+                          </Link>
                         }
                       />
                     </SidebarMenuSubItem>
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton
+                        isActive={pathname === "/dashboard/admin/transaksi/uang-saku"}
                         render={
-                          <a href="/dashboard/admin/transaksi/uang-saku">
+                          <Link href="/dashboard/admin/transaksi/uang-saku">
                             <span>Uang Saku</span>
-                          </a>
+                          </Link>
                         }
                       />
                     </SidebarMenuSubItem>
                     <SidebarMenuSubItem>
                       <SidebarMenuSubButton
+                        isActive={pathname === "/dashboard/admin/transaksi/laundry"}
                         render={
-                          <a href="/dashboard/admin/transaksi/laundry">
+                          <Link href="/dashboard/admin/transaksi/laundry">
                             <span>Laundry</span>
-                          </a>
+                          </Link>
                         }
                       />
                     </SidebarMenuSubItem>
@@ -129,11 +140,12 @@ export function AdminSidebar() {
 
               <SidebarMenuItem>
                 <SidebarMenuButton
+                  isActive={pathname === "/dashboard/admin/laporan-keuangan"}
                   render={
-                    <a href="/dashboard/admin/laporan-keuangan">
+                    <Link href="/dashboard/admin/laporan-keuangan">
                       <FileText className="h-4 w-4" />
                       <span>Laporan Keuangan</span>
-                    </a>
+                    </Link>
                   }
                 />
               </SidebarMenuItem>

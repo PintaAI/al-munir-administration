@@ -1,4 +1,5 @@
 import { createAuthClient } from "better-auth/react";
+import type { Role } from "./auth";
 
 export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
@@ -11,8 +12,8 @@ export const {
   useSession,
 } = authClient;
 
-// Export role type for use in components
-export type Role = "ADMIN" | "BENDAHARA_SMK" | "BENDAHARA_SMP" | "BENDAHARA_PONDOK" | "SANTRI";
+// Re-export role type for use in components
+export type { Role };
 
 // Extended user type with role
 export interface UserWithRole {

@@ -9,6 +9,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { UserInfo } from "@/components/user-info"
 
 export default function AdminLayout({
   children,
@@ -19,16 +20,10 @@ export default function AdminLayout({
     <SidebarProvider>
       <AdminSidebar />
       <SidebarInset>
-        <header className="flex h-14 items-center gap-4 border-b px-6">
+        <header className="flex items-center gap-4 p-2">
           <SidebarTrigger />
           <div className="flex-1" />
-          <nav className="flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm">
-                Dashboard
-              </Button>
-            </Link>
-          </nav>
+          <UserInfo />
         </header>
         <main className="flex-1 p-6">{children}</main>
       </SidebarInset>

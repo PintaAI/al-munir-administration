@@ -1,7 +1,17 @@
 "use client";
 
-import { useSession, type Role } from "@/lib/auth-client";
+import { useSession, type Role, signOut } from "@/lib/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { LogOut, User } from "lucide-react";
 
 interface UserInfoProps {
   showDetails?: boolean;
@@ -15,8 +25,26 @@ const roleLabels: Record<Role, string> = {
   SANTRI: "Santri",
 };
 
+const roleColors: Record<Role, string> = {
+  ADMIN: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+  BENDAHARA_SMK: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+  BENDAHARA_SMP: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+  BENDAHARA_PONDOK: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+  SANTRI: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400",
+};
+
 export function UserInfo({ showDetails = false }: UserInfoProps) {
   const { data: session, isPending } = useSession();
+
+  const handleSignOut = async () => {
+    await signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          window.location.href = "/auth";
+        },
+      },
+    });
+  };
 
   if (isPending) {
     return (
@@ -47,20 +75,50 @@ export function UserInfo({ showDetails = false }: UserInfoProps) {
   // Get role from user object (extended via better-auth additionalFields)
   const role = (user as { role?: Role }).role ?? "SANTRI";
   const roleLabel = roleLabels[role];
+  const roleColor = roleColors[role];
   const emailVerified = user.emailVerified;
 
   if (!showDetails) {
     return (
-      <div className="flex items-center gap-3">
-        <Avatar>
-          <AvatarImage src={user.image ?? undefined} alt={user.name ?? user.email} />
-          <AvatarFallback>{initials}</AvatarFallback>
-        </Avatar>
-        <div className="flex flex-col">
-          <span className="text-sm font-medium">{user.name ?? "User"}</span>
-          <span className="text-xs text-muted-foreground">{user.email}</span>
-        </div>
-      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent transition-colors cursor-pointer">
+            <Avatar>
+              <AvatarImage src={user.image ?? undefined} alt={user.name ?? user.email} />
+              <AvatarFallback>{initials}</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col items-start">
+              <span className="text-sm font-medium">{user.name ?? "User"}</span>
+              <span className={`text-xs px-2 py-0.5 rounded-full ${roleColor}`}>
+                {roleLabel}
+              </span>
+            </div>
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">{user.name ?? "User"}</p>
+                <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+              </div>
+            </DropdownMenuLabel>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <div className="px-2 py-1.5">
+            <span className={`text-xs px-2 py-0.5 rounded-full ${roleColor}`}>
+              {roleLabel}
+            </span>
+          </div>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem className="cursor-pointer" onClick={handleSignOut}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign Out
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
     );
   }
 
@@ -73,7 +131,9 @@ export function UserInfo({ showDetails = false }: UserInfoProps) {
         </Avatar>
         <div className="flex flex-col">
           <span className="text-lg font-semibold">{user.name ?? "User"}</span>
-          <span className="text-sm text-muted-foreground">{roleLabel}</span>
+          <span className={`text-xs px-2 py-0.5 rounded-full w-fit ${roleColor}`}>
+            {roleLabel}
+          </span>
         </div>
       </div>
       
@@ -92,7 +152,9 @@ export function UserInfo({ showDetails = false }: UserInfoProps) {
         
         <div className="flex justify-between">
           <span className="text-muted-foreground">Role</span>
-          <span className="font-medium">{roleLabel}</span>
+          <span className={`text-xs px-2 py-0.5 rounded-full ${roleColor}`}>
+            {roleLabel}
+          </span>
         </div>
         
         <div className="flex justify-between">
