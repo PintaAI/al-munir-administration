@@ -12,7 +12,7 @@ export default function AdminPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Kelola Pengguna</CardTitle>
+            <CardTitle>Kelola Penggunaa</CardTitle>
             <CardDescription>Tambah, edit, atau hapus pengguna</CardDescription>
           </CardHeader>
           <CardContent>
